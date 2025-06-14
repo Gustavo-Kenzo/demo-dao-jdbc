@@ -19,6 +19,17 @@ public class SellerDaoJDBC implements SellerDao {
 		this.conn = conn;
 	}
 
+	private Department instantiateDepartment(ResultSet rs) throws SQLException {
+		Department dep = new Department(rs.getInt("departmentId"), rs.getString("department.name"));
+		return dep;
+	}
+
+	private Seller instantiateSeller(ResultSet rs, Department dep) throws SQLException {
+		Seller seller = new Seller(rs.getInt("id"), rs.getString("name"), rs.getString("email"),
+				rs.getDate("birthDate").toLocalDate(), rs.getDouble("baseSalary"), dep);
+		return seller;
+	}
+
 	@Override
 	public void insert(Seller obj) {
 		// TODO Auto-generated method stub
@@ -42,14 +53,15 @@ public class SellerDaoJDBC implements SellerDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT seller.*, department.Name " + "FROM seller JOIN department "
-					+ "ON department.Id=seller.DepartmentId " + "WHERE seller.Id=?");
+			st = conn.prepareStatement("SELECT seller.*, department.Name " 
+					+ "FROM seller JOIN department "
+					+ "ON department.Id=seller.DepartmentId " 
+					+ "WHERE seller.Id=?");
 			st.setInt(1, id);
 			rs = st.executeQuery();
 			if (rs.next()) {
-				Department dep = new Department(rs.getInt("departmentId"), rs.getString("department.name"));
-				Seller seller = new Seller(rs.getInt("id"), rs.getString("name"), rs.getString("email"),
-						rs.getDate("birthDate").toLocalDate(), rs.getDouble("baseSalary"), dep);
+				Department dep = instantiateDepartment(rs);
+				Seller seller = instantiateSeller(rs, dep);
 				return seller;
 			}
 			return null;
