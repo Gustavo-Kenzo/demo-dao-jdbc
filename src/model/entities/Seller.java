@@ -64,8 +64,16 @@ public class Seller implements Serializable {
 		return id;
 	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public double getBaseSalary() {
 		return baseSalary;
+	}
+
+	public void setBaseSalary(double baseSalary) {
+		this.baseSalary = baseSalary;
 	}
 
 	@Override
